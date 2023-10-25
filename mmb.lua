@@ -5131,7 +5131,7 @@ end
 Tabs.FarmOtherMain:AddDropdown("Select Mob", {
     Title = "Select Mob",
     Values = TableMob(),
-    Multi = true,
+    Multi = false,
     Default = Settings["Select Mob"] or {},
     Callback = function(value)
         SaveSettings("Select Mob",value)
@@ -5156,19 +5156,19 @@ function FarmMaterial()
     AutoKillMob(NameSelect,not Options["Farm Material"].Value)
 end
 function FarmSelectMob()
-    local TableMobSelect = {}
+    --[[local TableMobSelect = {}
     for i,v in next,Options["Select Mob"].Value do 
         table.insert(TableMobSelect,i)
-    end
-    AutoKillMob(TableMobSelect,not Options["Auto Mob Farm"].Value)
+    end]]
+    AutoKillMob(Options["Select Mob"].Value,not Options["Auto Mob Farm"].Value)
 end
 
 spawn(function()
     while wait() do 
         if Options["Farm Material"].Value then 
-            pcall(function()
+            
                 FarmMaterial()            
-            end)
+            
         end
     end
 end)
