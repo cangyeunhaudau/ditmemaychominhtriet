@@ -961,7 +961,7 @@ function ToggleNoclip()
     or Options["Auto Soul Guitar"].Value
     or Options["Teleport Island"].Value
     or Options["Auto Mob Farm"].Value
-    or Options["Farm Material"].Value then
+    or Options["Auto Material"].Value then
         return true 
     end
 end
@@ -1453,7 +1453,7 @@ end
 local MobBlacklist = {}
 function TeleportSpawnMob(Path,value)
     if typeof(Path) == "table" then
-        if #MobBlacklist >= 4 then 
+        if #MobBlacklist >= #Path then 
             MobBlacklist = {}
             return 
         end
@@ -5153,7 +5153,7 @@ function FarmMaterial()
         return
     end
     local NameSelect = NameMaterials[Options["Select Material"].Value]
-    AutoKillMob(NameSelect,not Options["Farm Material"].Value)
+    AutoKillMob(NameSelect,not Options["Auto Material"].Value)
 end
 function FarmSelectMob()
     --[[local TableMobSelect = {}
@@ -5165,7 +5165,7 @@ end
 
 spawn(function()
     while wait() do 
-        if Options["Farm Material"].Value then 
+        if Options["Auto Material"].Value then 
             
                 FarmMaterial()            
             
