@@ -23,6 +23,6 @@ function DetectMob(c)
     end
     return name
 end
-for i,v in next,DetectMob("Isle Outlaw").Head:GetChildren() do 
+for i,v in next,DetectMob("Isle Outlaw").Head:GetDescendants() do 
 	print(i,v)
 end
