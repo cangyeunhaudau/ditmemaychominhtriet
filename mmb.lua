@@ -13,7 +13,7 @@ function DetectMob(c)
     end
     for i, v in pairs(game.Workspace.Enemies:GetChildren()) do
         local stringgsub = v.Name:gsub(" %pLv. %d+%p", "")
-        if  ((typeof(c) == "table" and (table.find(c, v.Name) or table.find(c, stringgsub) or table.find(nametable, stringgsub) )) or (v.Name == c or c == stringgsub or v.Name == namegsub)) and v:IsA('Model') and IsMobAlive(v) then
+        if  ((typeof(c) == "table" and (table.find(c, v.Name) or table.find(c, stringgsub) or table.find(nametable, stringgsub) )) or (v.Name == c or c == stringgsub or v.Name == namegsub)) and v:IsA('Model')  then
             local magnitude = (v.HumanoidRootPart.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).magnitude
             if magnitude < dist then
                 dist = magnitude
