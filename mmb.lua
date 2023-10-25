@@ -5132,7 +5132,7 @@ Tabs.FarmOtherMain:AddDropdown("Select Mob", {
     Title = "Select Mob",
     Values = TableMob(),
     Multi = false,
-    Default = Settings["Select Mob"] or {},
+    Default = Settings["Select Mob"] or "",
     Callback = function(value)
         SaveSettings("Select Mob",value)
     end
