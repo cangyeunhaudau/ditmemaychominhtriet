@@ -4538,6 +4538,18 @@ function CheckItemInventory(b)
         end
     end
 end
+function CheckMasterSword(xx,xxx)
+    for i,v in next,getupvalues(require(game:GetService("Players").LocalPlayer.PlayerGui.Main.UIController.Inventory).UpdateRender) do
+        if i == 4 then
+            for i1,v1 in next,v do
+                if v1.details.Name == xx and  v1.details.Mastery >= xxx then
+                    return true
+                end
+            end
+        end
+    end
+    return false
+end
 function GetCDK()
     if not CheckItemInventory("Tushita")  or not CheckItemInventory("Yama") then 
         Fluent:Notify({
@@ -4550,7 +4562,7 @@ function GetCDK()
         return 
     end
     if CheckItemInventory("Tushita")  and CheckItemInventory("Yama") then
-        if not checkswordttk("Yama",350) or not checkswordttk("Tushita",350) then 
+        if not CheckMasterSword("Yama",350) or not CheckMasterSword("Tushita",350) then 
             Fluent:Notify({
                 Title = "Banana Hub",
                 Content = "Mastery >= 350",
