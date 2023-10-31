@@ -1845,7 +1845,9 @@ function FarmMethod()
         MobLevelFarm = {"Royal Squad [Lv. 525]","Shanda [Lv. 475]"}
     end
     if not plr.PlayerGui.Main:FindFirstChild("Quest").Visible   then
+        
         getquest()
+        print("truee")
     else
         if Options["Get Quest Farm"].Value and plr.Data.Level.Value >= LevelQuest and not plr.PlayerGui.Main:FindFirstChild("Quest").Visible  then  
             QuestBoneAndkatakuri(NameQuest,IDQuest)
