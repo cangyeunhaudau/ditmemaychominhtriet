@@ -314,6 +314,7 @@ end
 repeat wait() until  whitelistsuccess
 ----------------------------
 local Settings = {}
+local HttpService = game:GetService("HttpService")
 local FolderName = "Banana Hub"
 local SaveFileNameGame = "-BFNew.json"
 local SaveFileName = game.Players.LocalPlayer.Name..SaveFileNameGame
@@ -323,6 +324,7 @@ function SaveSettings(fff,fff2)
     if fff~=nil  then
         Settings[fff] = fff2
     end
+    HttpService = game:GetService("HttpService")
     if not isfolder(FolderName) then
         makefolder(FolderName)
     end
@@ -331,6 +333,7 @@ end
 
 function ReadSetting()
     local s,e = pcall(function()
+        HttpService = game:GetService("HttpService")
         if not isfolder(FolderName) then
             makefolder(FolderName)
         end
@@ -422,7 +425,8 @@ function HopServer()
         Hop()
     end
 end
-
+SettingHopServer = HttpService:JSONDecode(readfile(FolderName.."/" .. "Jobid.json"))
+SettingHopServer[game.JobId] = true
 -------
 getgenv().Options = Fluent.Options
 Tabs.ShopMain:AddButton({
@@ -649,7 +653,7 @@ loadstring([[
     local env = getgenv()
     local olddd
     olddd = hookmetamethod(game, "__index", function(self, key)
-        if tostring(key):lower()== 'hit' and env.psskill and (env.Options["Auto Mastery"].Value or env.Options["Auto Seabeast"].Value or env.Options["Auto Trial"].Value) then
+        if tostring(key):lower()== 'hit' and env.psskill and (env.Options["Auto Mastery"].Value or env.Options["Auto Sea Event"].Value or env.Options["Auto Trial"].Value) then
             return getgenv().psskill
         end
     return olddd(self, key)
@@ -662,7 +666,7 @@ loadstring([[
     MT.__namecall = newcclosure(function(self, ...)
     local Method = getnamecallmethod()
     local Args = {...}
-    if Method == 'FireServer' and self.Name == 'RemoteEvent' and env.psskill and (env.Options["Auto Mastery"].Value or env.Options["Auto Seabeast"].Value or env.Options["Auto Trial"].Value) then
+    if Method == 'FireServer' and self.Name == 'RemoteEvent' and env.psskill and (env.Options["Auto Mastery"].Value or env.Options["Auto Sea Event"].Value or env.Options["Auto Trial"].Value) then
         if  #Args == 1 and typeof(Args[1]) == "Vector3" then
             Args[1] = getgenv().psskill.Position
         end
@@ -963,7 +967,7 @@ function ToggleNoclip()
     or Options["Auto Dough King"].Value
     or Options["Kill DarkBeard"].Value
     or Options["Summon DarkBeard"].Value
-    or Options["Auto Seabeast"].Value
+    or Options["Auto Sea Event"].Value
     or Options["Auto Quest New World"].Value
     or Options["Teleport To Fruit"].Value
     or Options["Auto Raid"].Value
@@ -1912,9 +1916,9 @@ end
 spawn(function()
     while wait() do
         if Options["Auto Farm"].Value  then
-            
+            pcall(function()
                 FarmMethod()
-            
+            end)
         end
     end
 end)
@@ -2428,11 +2432,20 @@ Tabs.SeabeastTab:AddDropdown("Select Zone", {
         SaveSettings("Select Zone",value)
     end
 })
-Tabs.SeabeastTab:AddToggle("Auto Seabeast", {
-    Title = "Auto Seabeast",
-    Default = Settings["Auto Seabeast"] or false,
+Tabs.SeabeastTab:AddDropdown("Select Sea Event", {
+    Title = "Select Sea Event",
+    Values = {'SeaBeast', 'Ship',"Shark"},
+    Multi = true,
+    Default = Settings["Select Sea Event"] or {'SeaBeast', 'Ship',"Shark"},
     Callback = function(value)
-        SaveSettings("Auto Seabeast",value)
+        SaveSettings("Select Sea Event",value)
+    end
+})
+Tabs.SeabeastTab:AddToggle("Auto Sea Event", {
+    Title = "Auto Sea Event",
+    Default = Settings["Auto Sea Event"] or false,
+    Callback = function(value)
+        SaveSettings("Auto Sea Event",value)
     end
 })
 Tabs.SeabeastTab:AddToggle("Reset Teleport Get Boat", {
@@ -2584,32 +2597,32 @@ local TableFish = {
     "Piranha"
 }
 function checkseabeast()
-    for i,v in next,game:GetService("Workspace").SeaBeasts:GetChildren() do
-        if v.Name == "SeaBeast1" then
-            local s = v.HealthBBG.Frame.TextLabel.Text
-            local x = s:gsub("/%d+,%d+","")
-            local a = v.HealthBBG.Frame.TextLabel.Text
-            local b 
-            if string.find(x, ",") then
-                b = a:gsub("%d+,%d+/","")
-            else
-                b = a:gsub("%d+/","")
+        for i,v in next,game:GetService("Workspace").SeaBeasts:GetChildren() do
+            if v.Name == "SeaBeast1" then
+                local s = v.HealthBBG.Frame.TextLabel.Text
+                local x = s:gsub("/%d+,%d+","")
+                local a = v.HealthBBG.Frame.TextLabel.Text
+                local b 
+                if string.find(x, ",") then
+                    b = a:gsub("%d+,%d+/","")
+                else
+                    b = a:gsub("%d+/","")
+                end
+                local c = b:gsub(",","")
+                if tonumber(c) >= 90000 and plr:DistanceFromCharacter(v.HumanoidRootPart.Position) < 2000 then
+                    return v
+                end
             end
-            local c = b:gsub(",","")
-            if tonumber(c) >= 90000 and plr:DistanceFromCharacter(v.HumanoidRootPart.Position) < 2000 then
+        end
+        for i,v in next,game:GetService("Workspace").Enemies:GetChildren() do
+            if  v:FindFirstChild("Health")  and v.Health.Value > 0 and v:FindFirstChild("Engine") and plr:DistanceFromCharacter(v.Engine.Position) < 2000 then
                 return v
             end
         end
-    end
-    for i,v in next,game:GetService("Workspace").Enemies:GetChildren() do
-        if  v:FindFirstChild("Health")  and v.Health.Value > 0 and v:FindFirstChild("Engine") and plr:DistanceFromCharacter(v.Engine.Position) < 2000 then
-            return v
+        local DetectFish = DetectMob(TableFish)
+        if DetectFish and plr:DistanceFromCharacter(DetectFish.HumanoidRootPart.Position) < 2000 then 
+            return DetectFish 
         end
-    end
-    local DetectFish = DetectMob(TableFish)
-    if DetectFish and plr:DistanceFromCharacter(DetectFish.HumanoidRootPart.Position) < 2000 then 
-        return DetectFish 
-    end
     return false
 end
 
@@ -2746,12 +2759,28 @@ function ChangeSpeedBoat()
         v.VehicleSeat.TurnSpeed = Options["Value Speed Boat"].Value 
     end
 end
-
+function TeleportYIngore(v)
+    if not Options["Select Sea Event"].Value["SeaBeast"] and v.Name == "SeaBeast1" then 
+        return true 
+    elseif not Options["Select Sea Event"].Value["Ship"] and v:FindFirstChild("Engine") then 
+        return true 
+    elseif not Options["Select Sea Event"].Value["Shark"] and table.find(TableFish,v.Name) then 
+        return true 
+    end
+end
 function AutoSeabeast()
     local v = checkseabeast()
     if not v then 
         BuyBoatAndTeleBoat()
     else
+        if TeleportYIngore(v) then
+            local time = tick()
+            PositionWaitSea = ZoneSeabeast[Options["Select Zone"].Value]*CFrame.new(0,0,6000)
+            repeat wait()
+                toTarget(plr.Character.HumanoidRootPart.Position,PositionWaitSea.Position,PositionWaitSea)
+                checkboat().VehicleSeat.CFrame = PositionWaitSea
+            until tick()-time >= 2 or not Options["Auto Sea Event"].Value
+        end           
         repeat task.wait()
             TeleportBoat()
             TeleportSeabeast(v)
@@ -2768,7 +2797,7 @@ function AutoSeabeast()
             else
                 UseSkillSeabeast(v)
             end
-        until not v or not v.Parent  or not Options["Auto Seabeast"].Value or (v:FindFirstChild("Health") and v.Health.Value == 0) or (v:FindFirstChildWhichIsA("Humanoid") and v.Humanoid.Health == 0)
+        until not v or not v.Parent  or not Options["Auto Sea Event"].Value or (v:FindFirstChild("Health") and v.Health.Value == 0) or (v:FindFirstChildWhichIsA("Humanoid") and v.Humanoid.Health == 0)
     end
 end
 function TeleportPlayer()
@@ -2781,7 +2810,7 @@ end
 spawn(function()
     while wait() do 
         pcall(function()
-            if Options["Auto Seabeast"].Value then 
+            if Options["Auto Sea Event"].Value then 
                 AutoSeabeast()
             end    
         end)
