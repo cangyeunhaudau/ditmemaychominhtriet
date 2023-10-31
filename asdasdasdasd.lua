@@ -1963,8 +1963,8 @@ spawn(function()
             pcall(function() 
                 if not game.Players.LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel") then
                     game:GetService("VirtualInputManager"):SendKeyEvent(true, "E", false, game)
+                    wait()
                     game:GetService("VirtualInputManager"):SendKeyEvent(false, "E", false, game)
-                    task.wait(3)
                 end
             end)
         end
@@ -2780,6 +2780,7 @@ function AutoSeabeast()
                 toTarget(plr.Character.HumanoidRootPart.Position,PositionWaitSea.Position,PositionWaitSea)
                 checkboat().VehicleSeat.CFrame = PositionWaitSea
             until tick()-time >= 2 or not Options["Auto Sea Event"].Value
+            return 
         end           
         repeat task.wait()
             TeleportBoat()
