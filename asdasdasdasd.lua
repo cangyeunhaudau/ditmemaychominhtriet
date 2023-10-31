@@ -1912,9 +1912,9 @@ end
 spawn(function()
     while wait() do
         if Options["Auto Farm"].Value  then
-            pcall(function()
+            
                 FarmMethod()
-            end)
+            
         end
     end
 end)
