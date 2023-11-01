@@ -1960,6 +1960,7 @@ spawn(function()
                     game:GetService("VirtualInputManager"):SendKeyEvent(true, "E", false, game)
                     wait()
                     game:GetService("VirtualInputManager"):SendKeyEvent(false, "E", false, game)
+                    wait(3)
                 end
             end)
         end
@@ -2429,7 +2430,7 @@ Tabs.SeabeastTab:AddDropdown("Select Zone", {
 })
 Tabs.SeabeastTab:AddDropdown("Select Sea Event", {
     Title = "Select Sea Event",
-    Values = {'SeaBeast', 'Ship',"Shark"},
+    Values = {'SeaBeast', 'Ship',"Shark","Terrorshark"},
     Multi = true,
     Default = Settings["Select Sea Event"] or {'SeaBeast', 'Ship',"Shark","Terrorshark"},
     Callback = function(value)
@@ -2441,6 +2442,13 @@ Tabs.SeabeastTab:AddToggle("Auto Sea Event", {
     Default = Settings["Auto Sea Event"] or false,
     Callback = function(value)
         SaveSettings("Auto Sea Event",value)
+    end
+})
+Tabs.SeabeastTab:AddToggle("Auto Attack Leviathan", {
+    Title = "Auto Attack Leviathan",
+    Default = Settings["Auto Attack Leviathan"] or false,
+    Callback = function(value)
+        SaveSettings("Auto Attack Leviathan",value)
     end
 })
 Tabs.SeabeastTab:AddToggle("Reset Teleport Get Boat", {
@@ -2747,8 +2755,18 @@ function TeleportBoat()
         checkboat().VehicleSeat.CFrame = PositionWaitSea*CFrame.new(0,0,1000)
     end
 end
+function checkSpeedboat()
+    for i,v in next,game:GetService("Workspace").Boats:GetChildren() do
+        if v:IsA("Model") then
+            if v:FindFirstChild("VehicleSeat") and v.VehicleSeat.MaxSpeed < Options["Value Speed Boat"].Value and v:FindFirstChild("Humanoid") and  v.Humanoid.Value > 0 then
+                return v
+            end
+        end
+    end
+    return false
+end
 function ChangeSpeedBoat()
-    local v = checkboat()
+    local v = checkSpeedboat()
     if v then 
         v.VehicleSeat.MaxSpeed = Options["Value Speed Boat"].Value
         v.VehicleSeat.TurnSpeed = Options["Value Speed Boat"].Value 
