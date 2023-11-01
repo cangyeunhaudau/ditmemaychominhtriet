@@ -2759,7 +2759,7 @@ function TeleportYIngore(v)
         return true 
     elseif not Options["Select Sea Event"].Value["Ship"] and v:FindFirstChild("Engine") then 
         return true
-    elseif Options["Select Sea Event"].Value["Terrorshark"] and v.Name = "Terrorshark" then 
+    elseif Options["Select Sea Event"].Value["Terrorshark"] and v.Name == "Terrorshark" then 
         return false
     elseif not Options["Select Sea Event"].Value["Shark"] and table.find(TableFish,v.Name) then 
         return true 
