@@ -2300,7 +2300,7 @@ end)
 ------------------Dough King------------------
 function checkcountitem(x,xx)
     for i,v in next,game.ReplicatedStorage.Remotes.CommF_:InvokeServer("getInventory") do
-        if v.Name == x and v.Count >= xx then
+        if v.Name == x and v.Count and v.Count >= xx then
             return true
         end
     end
@@ -2431,7 +2431,7 @@ Tabs.SeabeastTab:AddDropdown("Select Sea Event", {
     Title = "Select Sea Event",
     Values = {'SeaBeast', 'Ship',"Shark"},
     Multi = true,
-    Default = Settings["Select Sea Event"] or {'SeaBeast', 'Ship',"Shark"},
+    Default = Settings["Select Sea Event"] or {'SeaBeast', 'Ship',"Shark","Terrorshark"},
     Callback = function(value)
         SaveSettings("Select Sea Event",value)
     end
@@ -2758,7 +2758,9 @@ function TeleportYIngore(v)
     if not Options["Select Sea Event"].Value["SeaBeast"] and v.Name == "SeaBeast1" then 
         return true 
     elseif not Options["Select Sea Event"].Value["Ship"] and v:FindFirstChild("Engine") then 
-        return true 
+        return true
+    elseif Options["Select Sea Event"].Value["Terrorshark"] and v.Name = "Terrorshark" then 
+        return false
     elseif not Options["Select Sea Event"].Value["Shark"] and table.find(TableFish,v.Name) then 
         return true 
     end
@@ -4879,12 +4881,12 @@ function autoCraftSharkAnchor()
         wait(5)
         return
     end
-    if not checkcountitem("Monster Magnet",1) then
-        if not checkcountitem("Shark Tooth Necklace",1) and  checkcountitem("Mutant Tooth",1) and checkcountitem("Shark Tooth",5) then
+    if not CheckItemInventory("Monster Magnet") then
+        if not CheckItemInventory("Shark Tooth Necklace") and  checkcountitem("Mutant Tooth",1) and checkcountitem("Shark Tooth",5) then
             game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CraftItem","Craft","ToothNecklace")
-        elseif not checkcountitem("Terror Jaw",1) and  checkcountitem("Mutant Tooth",2) and checkcountitem("Shark Tooth",5) and checkcountitem("Terror Eyes",1) and checkcountitem("Fool's Gold",10) then 
+        elseif not CheckItemInventory("Terror Jaw") and  checkcountitem("Mutant Tooth",2) and checkcountitem("Shark Tooth",5) and checkcountitem("Terror Eyes",1) and checkcountitem("Fool's Gold",10) then 
             game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CraftItem","Craft","TerrorJaw")
-        elseif checkcountitem("Shark Tooth Necklace",1) and checkcountitem("Terror Jaw",1) and checkcountitem("Terror Eyes",2) and checkcountitem("Shark Tooth",10) and checkcountitem("Electric Wing",10) and checkcountitem("Fool's Gold",20) then 
+        elseif CheckItemInventory("Shark Tooth Necklace") and CheckItemInventory("Terror Jaw") and checkcountitem("Terror Eyes",2) and checkcountitem("Shark Tooth",10) and checkcountitem("Electric Wing",10) and checkcountitem("Fool's Gold",20) then 
             game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CraftItem","Craft","SharkAnchor")
         end
     end
