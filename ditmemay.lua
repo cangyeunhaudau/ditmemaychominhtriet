@@ -693,7 +693,7 @@ Tabs.FarmMain:AddDropdown("Select Speed Attack", {
 })
 Tabs.FarmMain:AddToggle("Auto Click", {
     Title = "Auto Click",
-    Default = Settings["Auto Click"] or true,
+    Default = Settings["Auto Click"] or false,
     Callback = function(value)
         SaveSettings("Auto Click",value)
     end
@@ -988,7 +988,8 @@ function ToggleNoclip()
     or Options["Auto Upgrade Sword Inventory"].Value
     or Options["Auto Kill Boss"].Value
     or Options["Farm Observation"].Value
-    or Options["Auto Kill All Boss"].Value then
+    or Options["Auto Kill All Boss"].Value
+    or Options["Teleport Mirage"].Value then
         return true 
     end
 end
@@ -2900,7 +2901,83 @@ function DetectLeviathan(path)
         end
     end
 end
-
+function checkseabeast2()
+    for i,v in next,game:GetService("Workspace").SeaBeasts:GetChildren() do
+        if v.Name == "SeaBeast1" then
+            local s = v.HealthBBG.Frame.TextLabel.Text
+            local x = s:gsub("/%d+,%d+","")
+            local a = v.HealthBBG.Frame.TextLabel.Text
+            local b 
+            if string.find(x, ",") then
+                b = a:gsub("%d+,%d+/","")
+            else
+                b = a:gsub("%d+/","")
+            end
+            local c = b:gsub(",","")
+            if tonumber(c) >= 90000  then
+                return v
+            end
+        end
+    end
+    return false
+end
+function AutoAllSkill(v)
+    local TableSkill = {"Z","X","C","V","F"}
+    if plr:DistanceFromCharacter(v) <= 500  then 
+        local NameWpMelee = NameWeapon("Melee")
+        local NameWpSword = NameWeapon("Sword")
+        local NameWpDF = NameWeapon("Blox Fruit")
+        local NameWpGun = NameWeapon("Gun")
+        local DetectFrame = game:GetService("Players").LocalPlayer.PlayerGui.Main.Skills
+        if not DetectFrame:FindFirstChild(NameWpMelee) 
+        or not DetectFrame:FindFirstChild(NameWpSword) 
+        or not DetectFrame:FindFirstChild(NameWpDF) 
+        or not DetectFrame:FindFirstChild(NameWpGun) then 
+            equiptool(NameWpMelee)
+            wait(0.2)
+            equiptool(NameWpSword)
+            wait(0.2)
+            equiptool(NameWpDF)
+            wait(0.2)
+            equiptool(NameWpGun)
+            return 
+        end
+        local NameSkill = CheckCDSkill(NameWpMelee,TableSkill) or CheckCDSkill(NameWpSword,TableSkill) or CheckCDSkill(NameWpDF,TableSkill) or CheckCDSkill(NameWpGun,TableSkill) 
+        if NameSkill then
+            equiptool(NameSkill.Parent.Name)
+            game:GetService("VirtualInputManager"):SendKeyEvent(true, NameSkill.Name, false, game)
+            task.wait(0.5)
+            game:GetService("VirtualInputManager"):SendKeyEvent(false, NameSkill.Name, false, game)
+        end
+    end
+end
+function AutoFishV2()
+    local v = checkseabeast2()
+    if v then 
+        if not checkboat() then
+            local PositionGetBoat = CFrame.new(-13.488054275512695, 10.311711311340332, 2927.692)
+            if (PositionGetBoat.Position-plr.Character.HumanoidRootPart.Position).Magnitude > 8 then
+                toTarget(plr.Character.HumanoidRootPart.Position,PositionGetBoat.Position,PositionGetBoat)
+            else
+                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyBoat","PirateGrandBrigade")
+            end
+        else
+            local PositionWaitSea = CFrame.new(28.4108+20, 1.2327+40, 3679.99+10)
+            if (checkboat().VehicleSeat.Position-PositionWaitSea.Position).Magnitude > 50 then 
+                checkboat().VehicleSeat.CFrame = PositionWaitSea
+            else
+                if not plr.Character.Humanoid.Sit then 
+                    toTarget(plr.Character.HumanoidRootPart.Position,checkboat().VehicleSeat.Position,checkboat().VehicleSeat.CFrame)
+                end
+            end
+        end
+    else
+        repeat task.wait()
+            TeleportSeabeast(v)
+            AutoAllSkill(v.HumanoidRootPart.Position)
+        until not v or not v.Parent or v.Health.Value <= 0 or not Options["Auto Sea Event"].Value
+    end
+end
 function AutoAttackLeviathan()
     local v = DetectLeviathan(game.workspace.SeaBeasts) or DetectLeviathan(game.workspace.SeaEvents)
     repeat task.wait()
@@ -2920,7 +2997,7 @@ spawn(function()
     while wait() do 
         pcall(function()
             if Options["Auto Sea Event"].Value then 
-                AutoSeabeast()
+                AutoFishV2()
             end    
         end)
     end
@@ -3625,53 +3702,7 @@ function AutoMinkV2()
         toTarget(game.Players.LocalPlayer.Character.HumanoidRootPart.Position,v.Position,v.CFrame*CFrame.new(0,1,0),true)
     until not v or not v.Parent or not Options["Auto Upgrade Race V2-V3"].Value
 end
-function checkseabeast2()
-    for i,v in next,game:GetService("Workspace").SeaBeasts:GetChildren() do
-        if v.Name == "SeaBeast1" then
-            local s = v.HealthBBG.Frame.TextLabel.Text
-            local x = s:gsub("/%d+,%d+","")
-            local a = v.HealthBBG.Frame.TextLabel.Text
-            local b 
-            if string.find(x, ",") then
-                b = a:gsub("%d+,%d+/","")
-            else
-                b = a:gsub("%d+/","")
-            end
-            local c = b:gsub(",","")
-            if tonumber(c) >= 90000 and plr:DistanceFromCharacter(v.HumanoidRootPart.Position) < 2000 then
-                return v
-            end
-        end
-    end
-    return false
-end
-function AutoFishV2()
-    local v = checkseabeast2()
-    if v then 
-        if not checkboat() then
-            local PositionGetBoat = CFrame.new(-13.488054275512695, 10.311711311340332, 2927.692)
-            if (PositionGetBoat.Position-plr.Character.HumanoidRootPart.Position).Magnitude > 8 then
-                toTarget(plr.Character.HumanoidRootPart.Position,PositionGetBoat.Position,PositionGetBoat)
-            else
-                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyBoat","PirateGrandBrigade")
-            end
-        else
-            local PositionWaitSea = CFrame.new(28.4108+20, 1.2327+40, 3679.99+10)
-            if (checkboat().VehicleSeat.Position-PositionWaitSea.Position).Magnitude > 50 then 
-                checkboat().VehicleSeat.CFrame = PositionWaitSea
-            else
-                if not plr.Character.Humanoid.Sit then 
-                    toTarget(plr.Character.HumanoidRootPart.Position,checkboat().VehicleSeat.Position,checkboat().VehicleSeat.CFrame)
-                end
-            end
-        end
-    else
-        repeat task.wait()
-            TeleportSeabeast(v)
-            UseSkillSeabeast(v)
-        until not v or not v.Parent or v.Health.Value <= 0 or not Options["Auto Upgrade Race V2-V3"].Value
-    end
-end
+
 
 function UpgradeRaceV2AndV3()
     local Race = CheckRace()
