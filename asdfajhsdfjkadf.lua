@@ -2768,7 +2768,7 @@ function checkseabeast()
         end
     return false
 end
-local detectterrorshark 
+getgenv().detectterrorshark 
 function TeleportSeabeast(x)
     if x:FindFirstChild("Engine") then 
         getgenv().psskill = x.Engine.CFrame*CFrame.new(0,-25,0)
@@ -2788,7 +2788,7 @@ function TeleportSeabeast(x)
     else
         local Distance = 50 
         if x.Name == "Terrorshark" then 
-            detectterrorshark = x
+            getgenv().detectterrorshark  = x
             Distance = Options["Teleport Y Attack Terrorshark"].Value
         end
         toTarget(plr.Character.HumanoidRootPart.Position,x.HumanoidRootPart.Position,x.HumanoidRootPart.CFrame*CFrame.new(0,Distance,0))
@@ -2928,7 +2928,7 @@ function TeleportYIngore(v)
     end
 end
 game:GetService("Workspace")["_WorldOrigin"].DescendantAdded:Connect(function(v)
-    if v:IsA("Part") and detectterrorshark and (detectterrorshark.HumanoidRootPart.Position-v.Position) <= 20 then 
+    if v:IsA("Part") and getgenv().detectterrorshark  and (getgenv().detectterrorshark HumanoidRootPart.Position-v.Position) <= 100 then 
         getgenv().Doding = true
         getgenv().ReadyToDodge = true
         local Timer = tick()
@@ -4480,7 +4480,7 @@ function KillPlayerTrial()
         KillAuraDone = false
         return
     end
-    if KillAuraDone and game.Players.LocalPlayer.PlayerGui.Main.Timer.Visible    and Options["Auto Reset Character"].Value then 
+    if KillAuraDone and game.Players.LocalPlayer.PlayerGui.Main.Timer.Visible and Options["Auto Reset Character"].Value then 
         plr.Character.Humanoid.Health = 0
         return
     end
