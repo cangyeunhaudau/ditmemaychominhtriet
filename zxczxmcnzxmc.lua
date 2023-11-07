@@ -2926,8 +2926,8 @@ function TeleportYIngore(v)
         return true 
     end
 end
-game:GetService("Workspace")["_WorldOrigin"].DescendantAdded:Connect(function(v)
-    if v:IsA("Part") and getgenv().detectterrorshark  and (getgenv().detectterrorshark.HumanoidRootPart.Position-v.Position) <= 100 then 
+game:GetService("Workspace")["_WorldOrigin"].ChildAdded:Connect(function(v)
+    if getgenv().detectterrorshark and  v:IsA("Part") and (getgenv().detectterrorshark.HumanoidRootPart.Position-v.Position) <= 100 then 
         getgenv().Doding = true
         getgenv().ReadyToDodge = true
         local Timer = tick()
