@@ -3,7 +3,7 @@ local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, game:G
 FLYING = false
 QEfly = true
 iyflyspeed = 1
-vehicleflyspeed = 3
+vehicleflyspeed = 6
 function getRoot(char)
 	local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
 	return rootPart
