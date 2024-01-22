@@ -14,9 +14,9 @@ wait(1)
 vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 end)
 local CFrameFruits = {
-    ["Leopard Fruit CFrame"] = CFrame.new(-12485.8623046875, 337.474365234375, -7470.90283203125),
-    ["Dragon Fruit CFrame"] = CFrame.new(-12616.123046875, 336.91436767578125, -7446.2841796875),
-    ["Kitsune Fruit CFrame"] = CFrame.new(-12515.224609375, 336.91436767578125, -7552.5537109375),
+    ["Leopard Fruit"] = CFrame.new(-12485.8623046875, 337.474365234375, -7470.90283203125),
+    ["Dragon Fruit"] = CFrame.new(-12616.123046875, 336.91436767578125, -7446.2841796875),
+    ["Kitsune Fruit"] = CFrame.new(-12515.224609375, 336.91436767578125, -7552.5537109375),
 }
 if game.PlaceId ~= 7449423635 and not getgenv().Sea2 then
     local args = {
@@ -30,9 +30,9 @@ elseif game.PlaceId ~= 4442272183 and  getgenv().Sea2 then
     }
     game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
     CFrameFruits = {
-        ["Leopard Fruit CFrame"] = CFrame.new(-378.45819091796875, 73.04586029052734, 345.3525695800781),
-        ["Dragon Fruit CFrame"] = CFrame.new(-443.6914367675781, 73.04586029052734, 285.88824462890625),
-        ["Kitsune Fruit CFrame"] = CFrame.new(-315.5158386230469, 73.08589172363281, 275.23236083984375),
+        ["Leopard Fruit"] = CFrame.new(-378.45819091796875, 73.04586029052734, 345.3525695800781),
+        ["Dragon Fruit"] = CFrame.new(-443.6914367675781, 73.04586029052734, 285.88824462890625),
+        ["Kitsune Fruit"] = CFrame.new(-315.5158386230469, 73.08589172363281, 275.23236083984375),
     }
 end
 local plr = game.Players.LocalPlayer
@@ -86,6 +86,26 @@ function equiptool(toolname)
         plr.Character.Humanoid:EquipTool(plr.Backpack:FindFirstChild(toolname))
     end
 end
+WebHookStoreFruit = function(url,x)
+	msg = {
+		["content"] = x,
+	} 
+    local request = http_request
+    if syn then
+        request = syn.request 
+    end
+    local response = request(
+        {
+            Url = url,
+            Method = "POST",
+            Headers = {
+                ["Content-Type"] = "application/json"
+            },
+            Body = game:GetService("HttpService"):JSONEncode(msg)
+        }
+    )
+end
+
 spawn(function()
     while wait() do
         pcall(function()
@@ -109,14 +129,16 @@ spawn(function()
             local FruitDrop = DetectFruit(plr.Backpack) or DetectFruit(plr.Character)
             print(FruitDrop)
             if FruitDrop then
-                local PositionF = CFrameFruits[FruitDrop.Name.." CFrame"]
+                local PositionF = CFrameFruits[FruitDrop.Name]
                 if plr:DistanceFromCharacter(PositionF.Position) <= 20 then
                     if plr.Character:FindFirstChild(FruitDrop.Name) then 
+                        WebHookStoreFruit(getgenv().UrlWebhook,FruitDrop.Name)
                         local args = {
                             [1] = "Drop"
                         }
                         
                         FruitDrop.EatRemote:InvokeServer(unpack(args))
+                        wait(1)
                     else
                         equiptool(FruitDrop.Name)
                     end
