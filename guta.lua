@@ -42,3 +42,4 @@ function CFrameQuest()
     end
     getgenv().questpoint["SkyExp1Quest"] = CFrame.new(-7857.28516, 5544.34033, -382.321503, -0.422592998, 0, 0.906319618, 0, 1, 0, -0.906319618, 0, -0.422592998)
 end
+return CFrameQuest()
