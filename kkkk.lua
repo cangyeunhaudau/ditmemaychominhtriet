@@ -5,6 +5,7 @@
 
 repeat wait() until game:IsLoaded()
 repeat wait() until game.Players.LocalPlayer
+local plr = game.Players.LocalPlayer
 repeat wait() until plr.Character
 repeat wait() until plr.Character:FindFirstChild("HumanoidRootPart")
 repeat wait() until plr.Character:FindFirstChild("Humanoid")
