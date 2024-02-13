@@ -33,6 +33,16 @@ function DetectBlock(x)
     end
     return b
 end
+local CoordFarm = 7
+function DetectBlock2()
+    for i,v in next,workspace.__THINGS.__INSTANCE_CONTAINER.Active.AdvancedDigsite.Important.ActiveBlocks:GetChildren() do 
+        if v:IsA("Part") and v.BrickColor.Name ~= "Really black" then
+            if v:GetAttribute("Coord").X == CoordFarm and v:GetAttribute("Coord").Z == CoordFarm then 
+                return v 
+            end
+        end
+    end
+end
 function DetectChest()
     local a = math.huge
     local b 
@@ -58,7 +68,7 @@ while _G.on and  wait() do
                 return 
             end
             local e = DetectChest()
-            local d = e and  DetectBlock((e:GetAttribute("Coord")+Vector3.new(0,1,0))) or DetectBlock()
+            local d = e and  DetectBlock((e:GetAttribute("Coord")+Vector3.new(0,1,0))) 
             if d  then 
                 if e and  e.Name == "Animated"  then 
                     if d.BrickColor.Name == "Really black" then 
@@ -67,7 +77,7 @@ while _G.on and  wait() do
                     end
                 end
                 if plr:DistanceFromCharacter(d.Position) > 10 then 
-                    plr.Character.HumanoidRootPart.CFrame = d.CFrame *CFrame.new(0,3,0)
+                    plr.Character.HumanoidRootPart.CFrame = e.Top.CFrame *CFrame.new(0,3,0)
                 end
                 local args = {
                     [1] = "AdvancedDigsite",
@@ -75,11 +85,30 @@ while _G.on and  wait() do
                     [3] = d:GetAttribute("Coord")
                 }
                 game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(args))
-                wait(0.2)
+            else
+                local c = DetectBlock2()
+                if c then 
+                    local args = {
+                        [1] = "AdvancedDigsite",
+                        [2] = "DigBlock",
+                        [3] = c:GetAttribute("Coord")
+                    }
+                    game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(args))
+                    if plr:DistanceFromCharacter(c.Position) > 10 then 
+                        plr.Character.HumanoidRootPart.CFrame = c.CFrame *CFrame.new(0,4,0)
+                    end
+                else
+                    if CoordFarm >= 15 then 
+                        CoordFarm = 7 
+                    else
+                        CoordFarm = CoordFarm + 1 
+                        wait(1)
+                    end
+                end
             end
         else
             TeleportMid = true 
-            plr.Character.HumanoidRootPart.CFrame = workspace.__THINGS.Instances.AdvancedDigsite.Teleports.Enter.CFrame
+            plr.Character.HumanoidRootPart.CFrame = game.workspace.__THINGS.Instances.AdvancedDigsite.Teleports.Enter.CFrame
             wait(10)
         end
     end)
