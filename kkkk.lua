@@ -56,7 +56,7 @@ end
 function DetectBlock3()
     for i,v in next,workspace.__THINGS.__INSTANCE_CONTAINER.Active.AdvancedDigsite.Important.ActiveBlocks:GetChildren() do 
         if v:IsA("Part") and v.BrickColor.Name ~= "Really black" then
-            if  v:GetAttribute("Coord").Y >=  30 and   v:GetAttribute("Coord").Y <  50   then 
+            if  v:GetAttribute("Coord").Y >=  30 and   v:GetAttribute("Coord").Y <  50 and  v:GetAttribute("Coord").Z >= 7 and v:GetAttribute("Coord").X >= 7  then 
                 return v 
             end
         end
@@ -76,74 +76,95 @@ function DetectChest()
     end
     return b
 end
+function DetectOrbDia()
+    for i,v in next,workspace.__THINGS.Orbs:GetChildren() do 
+        if not  v:GetAttribute("OrbUID") then
+            return v
+        end
+    end
+end
 local TeleportMid = false
 _G.on = not _G.on
-while _G.on and  wait() do 
-    pcall(function()
-        if game.workspace.__THINGS.__INSTANCE_CONTAINER.Active:FindFirstChild("AdvancedDigsite") then 
-            if TeleportMid then 
-                plr.Character.HumanoidRootPart.CFrame = CFrame.new(651.444091796875, 58.21053695678711, -2525.94189453125)
-                TeleportMid = false
-                return 
-            end
-            local e = DetectChest()
-            local d = e and  DetectBlock((e:GetAttribute("Coord")+Vector3.new(0,1,0))) 
-            if d  then 
-                if e and  e.Name == "Animated"  then 
-                    if d.BrickColor.Name == "Really black" then 
-                        local Ignored = Instance.new("IntValue", e)
-                        Ignored.Name = "Ignored"
-                    end
+spawn(function()
+    while _G.on and  wait() do 
+        pcall(function()
+            if game.workspace.__THINGS.__INSTANCE_CONTAINER.Active:FindFirstChild("AdvancedDigsite") then 
+                if TeleportMid then 
+                    plr.Character.HumanoidRootPart.CFrame = CFrame.new(651.444091796875, 58.21053695678711, -2525.94189453125)
+                    TeleportMid = false
+                    return 
                 end
-                if plr:DistanceFromCharacter(d.Position) > 10 then 
-                    plr.Character.HumanoidRootPart.CFrame = e.Top.CFrame *CFrame.new(0,3,0)
-                end
-                local args = {
-                    [1] = "AdvancedDigsite",
-                    [2] = "DigBlock",
-                    [3] = d:GetAttribute("Coord")
-                }
-                game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(args))
-            else 
-                local f = DetectBlock3()
-                local c = DetectBlock2()
-                if not f then 
-                    if c then 
-                        local args = {
-                            [1] = "AdvancedDigsite",
-                            [2] = "DigBlock",
-                            [3] = c:GetAttribute("Coord")
-                        }
-                        game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(args))
-                        if plr:DistanceFromCharacter(c.Position) > 10 then 
-                            plr.Character.HumanoidRootPart.CFrame = c.CFrame *CFrame.new(0,4,0)
-                        end
-                    else
-                        if CoordFarm >= 15 then 
-                            CoordFarm = 7 
-                        else
-                            CoordFarm = CoordFarm + 1 
-                            wait(1)
-                        end
-                    end
+                local g = DetectOrbDia() 
+                if g then 
+                    plr.Character.HumanoidRootPart.CFrame = g.CFrame
+                    game:GetService("VirtualInputManager"):SendKeyEvent(true, "A", false, game)
+                    game:GetService("VirtualInputManager"):SendKeyEvent(false, "A", false, game)
+                    wait(0.2)
                 else
-                    if f then
+                    local e = DetectChest()
+                    local d = e and  DetectBlock((e:GetAttribute("Coord")+Vector3.new(0,1,0))) 
+                    if d  then 
+                        if e and  e.Name == "Animated"  then 
+                            if d.BrickColor.Name == "Really black" then 
+                                local Ignored = Instance.new("IntValue", e)
+                                Ignored.Name = "Ignored"
+                            end
+                        end
+                        if plr:DistanceFromCharacter(d.Position) > 10 then 
+                            plr.Character.HumanoidRootPart.CFrame = e.Top.CFrame *CFrame.new(0,3,0)
+                        end
                         local args = {
                             [1] = "AdvancedDigsite",
                             [2] = "DigBlock",
-                            [3] = f:GetAttribute("Coord")
+                            [3] = d:GetAttribute("Coord")
                         }
                         game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(args))
-                        if plr:DistanceFromCharacter(f.Position) > 10 then 
-                            plr.Character.HumanoidRootPart.CFrame = f.CFrame *CFrame.new(0,4,0)
+                    else 
+                        local f = DetectBlock3()
+
+                        if  f then 
+                            if plr:DistanceFromCharacter(f.Position) > 10 then 
+                                plr.Character.HumanoidRootPart.CFrame = f.CFrame *CFrame.new(0,4,0)
+                            else
+                                local args = {
+                                    [1] = "AdvancedDigsite",
+                                    [2] = "DigBlock",
+                                    [3] = f:GetAttribute("Coord")
+                                }
+                                game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(args))
+                            end
+                        else
+                            local c = DetectBlock2()
+                            if plr:DistanceFromCharacter(c.Position) > 10 then 
+                                plr.Character.HumanoidRootPart.CFrame = c.CFrame *CFrame.new(0,4,0)
+                            else
+                                local args = {
+                                    [1] = "AdvancedDigsite",
+                                    [2] = "DigBlock",
+                                    [3] = c:GetAttribute("Coord")
+                                }
+                                game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(args))
+                            end
                         end
                     end
                 end
+            else
+                TeleportMid = true 
+                plr.Character.HumanoidRootPart.CFrame = game.workspace.__THINGS.Instances.AdvancedDigsite.Teleports.Enter.CFrame
+                wait(10)
             end
-        else
-            TeleportMid = true 
-            plr.Character.HumanoidRootPart.CFrame = game.workspace.__THINGS.Instances.AdvancedDigsite.Teleports.Enter.CFrame
-            wait(10)
-        end
-    end)
-end
+        end)
+    end
+end)
+spawn(function()
+    while _G.on and  wait() do 
+        pcall(function()
+            for i,v in next,workspace.__THINGS.Orbs:GetChildren() do 
+                if v:GetAttribute("OrbUID") then 
+                    getsenv(game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.Game["Orbs Frontend"]).collect(v.Name)
+                    
+                end
+            end
+        end)
+    end
+end)
