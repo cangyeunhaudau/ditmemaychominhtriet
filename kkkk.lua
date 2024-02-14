@@ -17,6 +17,16 @@ vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 wait(1)
 vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 end)
+loadstring([[
+    local old = require(game.ReplicatedStorage.Library.Client.UpgradeCmds).GetPower
+require(game.ReplicatedStorage.Library.Client.UpgradeCmds).GetPower = function(...)
+    local a = ... 
+    if a == "Magnet" then 
+        return 1000
+    end
+    return old(...)
+end
+]])()
 function DetectBlock(x)
     local a = math.huge
     local b 
@@ -38,6 +48,15 @@ function DetectBlock2()
     for i,v in next,workspace.__THINGS.__INSTANCE_CONTAINER.Active.AdvancedDigsite.Important.ActiveBlocks:GetChildren() do 
         if v:IsA("Part") and v.BrickColor.Name ~= "Really black" then
             if v:GetAttribute("Coord").X == CoordFarm and v:GetAttribute("Coord").Z == CoordFarm then 
+                return v 
+            end
+        end
+    end
+end
+function DetectBlock3()
+    for i,v in next,workspace.__THINGS.__INSTANCE_CONTAINER.Active.AdvancedDigsite.Important.ActiveBlocks:GetChildren() do 
+        if v:IsA("Part") and v.BrickColor.Name ~= "Really black" then
+            if  v:GetAttribute("Coord").Y >=  30 and   v:GetAttribute("Coord").Y <  50   then 
                 return v 
             end
         end
@@ -85,24 +104,41 @@ while _G.on and  wait() do
                     [3] = d:GetAttribute("Coord")
                 }
                 game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(args))
-            else
+            else 
+                local f = DetectBlock3()
                 local c = DetectBlock2()
-                if c then 
-                    local args = {
-                        [1] = "AdvancedDigsite",
-                        [2] = "DigBlock",
-                        [3] = c:GetAttribute("Coord")
-                    }
-                    game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(args))
-                    if plr:DistanceFromCharacter(c.Position) > 10 then 
-                        plr.Character.HumanoidRootPart.CFrame = c.CFrame *CFrame.new(0,4,0)
+                if not f then 
+                    if c then 
+                        local args = {
+                            [1] = "AdvancedDigsite",
+                            [2] = "DigBlock",
+                            [3] = c:GetAttribute("Coord")
+                        }
+                        game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(args))
+                        if plr:DistanceFromCharacter(c.Position) > 10 then 
+                            plr.Character.HumanoidRootPart.CFrame = c.CFrame *CFrame.new(0,4,0)
+                        end
+                    else
+                        if CoordFarm >= 15 then 
+                            CoordFarm = 7 
+                        else
+                            CoordFarm = CoordFarm + 1 
+                            wait(1)
+                        end
                     end
                 else
-                    if CoordFarm >= 15 then 
-                        CoordFarm = 7 
-                    else
-                        CoordFarm = CoordFarm + 1 
-                        wait(1)
+                    if f then
+                        repeat wait()
+                            local args = {
+                                [1] = "AdvancedDigsite",
+                                [2] = "DigBlock",
+                                [3] = f:GetAttribute("Coord")
+                            }
+                            game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(args))
+                            if plr:DistanceFromCharacter(f.Position) > 10 then 
+                                plr.Character.HumanoidRootPart.CFrame = f.CFrame *CFrame.new(0,4,0)
+                            end
+                        until not v or not _G.on
                     end
                 end
             end
