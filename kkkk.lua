@@ -128,17 +128,15 @@ while _G.on and  wait() do
                     end
                 else
                     if f then
-                        repeat wait()
-                            local args = {
-                                [1] = "AdvancedDigsite",
-                                [2] = "DigBlock",
-                                [3] = f:GetAttribute("Coord")
-                            }
-                            game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(args))
-                            if plr:DistanceFromCharacter(f.Position) > 10 then 
-                                plr.Character.HumanoidRootPart.CFrame = f.CFrame *CFrame.new(0,4,0)
-                            end
-                        until not v or not _G.on
+                        local args = {
+                            [1] = "AdvancedDigsite",
+                            [2] = "DigBlock",
+                            [3] = f:GetAttribute("Coord")
+                        }
+                        game:GetService("ReplicatedStorage").Network.Instancing_FireCustomFromClient:FireServer(unpack(args))
+                        if plr:DistanceFromCharacter(f.Position) > 10 then 
+                            plr.Character.HumanoidRootPart.CFrame = f.CFrame *CFrame.new(0,4,0)
+                        end
                     end
                 end
             end
