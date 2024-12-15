@@ -1,10 +1,10 @@
 function CFrameQuest()
     getgenv().QuestPoses = {}
-    for i, v in pairs(getnilinstances()) do 
-        if v:IsA("Model")
-        and v:FindFirstChild("Head")
-        and v.Head:FindFirstChild("QuestBBG")
-        and v.Head.QuestBBG.Title.Text == "QUEST" then
+    for i, v in pairs(game:GetService("ReplicatedStorage").NPCs:GetDescendants()) do 
+       if v:IsA("Model")
+        and v:FindFirstChild("HumanoidRootPart")
+        and v.HumanoidRootPart:FindFirstChild("QuestBBG")
+        and v.HumanoidRootPart.QuestBBG.Title.Text == "QUEST" then
             getgenv().QuestPoses[v.Name] = v.Head.CFrame * CFrame.new(0, -2, 2)    
         end
     end
